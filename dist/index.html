@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Luna Chat</title>
+  <meta name="description" content="Discute simplement avec tes amis sur Luna Chat.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%237461c9'/%3E%3Cpath d='M39 12a20 20 0 1 0 13 34A22 22 0 1 1 39 12Z' fill='%23fff1b5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .shell{width:100vw!important;margin:0!important;box-shadow:none!important}
+    body{background:#292341!important}
+    .voice-room{margin-top:9px;width:100%;border:0;border-radius:9px;background:#40365f;color:#fff;padding:10px;text-align:left;font:inherit;cursor:pointer}.voice-room small{float:right;color:#c9c1e6;font-size:.72rem}.voice-button{border:1px solid #d9d0ff;background:#f3f0ff;color:#594a99;padding:8px 10px;border-radius:8px;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer}.profile small.connected{color:#7fd49b}#nameError{display:block;min-height:1.3em;color:#a23d5d;margin-top:7px;font-size:.8rem}
+    .gate{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 20%,#6050a8 0,#292341 42%,#161329 100%);color:#fff}.gate[hidden]{display:none}.gate-card{width:min(430px,100%);padding:38px;border:1px solid #ffffff26;border-radius:26px;background:#292341d9;box-shadow:0 24px 80px #0006}.gate-moon{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#8d7bdf;color:#fff4ba;font-size:2rem}.eyebrow{margin:20px 0 6px;color:#c7bfff;font-size:.75rem;font-weight:800;letter-spacing:.16em}.gate h1{font:2.5rem/1.05 Georgia,serif}.gate-copy{color:#c4bdd8}.gate label{display:block;margin:16px 0 0;font-weight:700;font-size:.88rem}.gate input{display:block;width:100%;margin-top:6px;border:1px solid #625887;border-radius:10px;padding:12px;background:#201b35;color:#fff;font:inherit}.gate form button{width:100%;margin-top:20px;border:0;border-radius:10px;padding:13px;background:#806ce0;color:#fff;font:inherit;font-weight:800;cursor:pointer}.text-button{display:block;margin:16px auto 0;border:0;background:none;color:#c6bbff;font:inherit;cursor:pointer}.gate #loginInfo{min-height:1.3em;color:#ffc1cf;font-size:.9rem}.shell{display:none}.signed-in .shell{display:grid}.signed-in .gate{display:none}
+    .miz-credit{position:fixed;right:16px;bottom:12px;z-index:40;color:#aaa2c6;font-size:.72rem;letter-spacing:.04em;pointer-events:none}
+    body:not(.signed-in) .miz-credit{color:#e5dfff}
+  </style>
+</head>
+<body>
+  <section class="gate" id="gate"><div class="gate-card"><div class="gate-moon">☾</div><p class="eyebrow">LUNA CHAT</p><h1>La nuit a son salon.</h1><p class="gate-copy">Entre avec ton adresse e-mail. Chaque membre possède son propre mot de passe.</p><form id="loginForm"><label>E-mail<input id="loginEmail" type="email" required autocomplete="email"></label><label>Mot de passe<input id="loginPassword" type="password" required minlength="8" autocomplete="current-password"></label><button type="submit">Entrer dans Luna</button></form><p class="gate-help">Première visite ? Entre ton e-mail et choisis un mot de passe, puis appuie sur « Créer mon compte ».</p><button class="text-button" id="signup" type="button">Créer mon compte</button><p id="loginInfo" role="status"></p></div></section>
+  <main class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="moon">◐</span><span>Luna Chat</span></div>
+      <button class="create" id="newRoom">＋ Créer un salon</button>
+      <p class="section">SALONS</p>
+      <nav id="rooms" aria-label="Salons"><button class="room active" data-room="Général"><span>#</span> Général</button><button class="room" data-room="Jeux"><span>#</span> Jeux</button><button class="room" data-room="Musique"><span>#</span> Musique</button></nav>
+      <button class="voice-room" id="voiceRoom">🎙 Général vocal <small id="voiceStatus">hors ligne</small></button>
+      <div class="profile"><div class="avatar" id="avatar">L</div><div><strong id="profileName">Luna</strong><small id="connectionState">connexion…</small></div><button id="editName" aria-label="Modifier mon pseudo">⚙</button></div>
+    </aside>
+    <section class="chat">
+      <header><div><h1 id="roomTitle"># Général</h1><p>Un endroit pour se dire bonjour.</p></div><span><button class="voice-button" id="openVoice">🎙 Vocal</button> <span class="online"><i></i><b id="onlineCount">1</b> en ligne</span></span></header>
+      <div class="welcome" id="welcome"><div class="welcome-moon">☾</div><h2>Bienvenue sur Luna Chat</h2><p>Choisis un pseudo et invite tes amis. La conversation commence ici.</p></div>
+      <div class="messages" id="messages" aria-live="polite"></div>
+      <form id="form" class="composer"><input id="message" maxlength="500" autocomplete="off" placeholder="Écrire dans # Général" aria-label="Message"><button aria-label="Envoyer">➤</button></form>
+    </section>
+    <aside class="members"><h2>EN LIGNE — <span id="membersCount">1</span></h2><div class="member"><div class="avatar violet">L</div><span id="memberName">Luna</span><i></i></div><div class="invite"><strong>Tu veux inviter tes amis ?</strong><p>Partage le lien du site avec eux.</p><button id="copyLink">Copier le lien</button><small id="copied"></small></div></aside>
+  </main>
+  <dialog id="nameDialog"><form method="dialog"><h2>Ton pseudo</h2><p>Il est unique et visible dans les salons.</p><input id="nameInput" maxlength="20" value="Luna" aria-label="Pseudo"><small id="nameError"></small><div><button value="cancel">Annuler</button><button id="saveName" value="default">Enregistrer</button></div></form></dialog>
+  <dialog id="voiceDialog"><form method="dialog"><h2>Général vocal</h2><p>Les appels vocaux seront prêts dès que la base Firebase sera créée.</p><button value="cancel">Fermer</button></form></dialog>
+  <script type="module" src="app.js"></script>
+  <span class="miz-credit">créé par Miz</span>
+</body>
+</html>
+
